@@ -3,7 +3,7 @@ import numpy as np
 
 
 def plot_confusion_matrix(cm, labels_name, title):
-    cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]    # 归一化
+    cm = cm.astype('float') / cm.sum(axis=1)    # 归一化
     plt.imshow(cm, interpolation='nearest')    # 在特定的窗口上显示图像
     plt.title(title)    # 图像标题
     plt.colorbar()

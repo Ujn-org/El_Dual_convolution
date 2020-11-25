@@ -213,9 +213,9 @@ class DualChannelTemporalConvolution(Layer):
         for layer_out in self.skip_connections:
             squess_out.append(K.expand_dims(layer_out))
         concat_out = K.concatenate(squess_out)
-        x = layers.Conv3D(4, [5, 4, 64], padding="valid", activation="relu")(concat_out)
-        x = K.reshape(x, [-1, 4])
-        return x
+        x = layers.Conv3D(3, [5, 4, 64], padding="valid", activation="linear")(concat_out)
+        x = K.reshape(x, [-1, 3])
+        return LayerNormalization()(x)
 
 # inputs = tf.placeholder(dtype=tf.float32, shape=[64, 5, 4, 64])
 # dual_channel_Tcn = DualChannelTemporalConvolution()(inputs)

@@ -106,6 +106,10 @@ class loadDataset():
         return pd.DataFrame(attr)
 
 
-# Data = loadDataset("../data/traffic/traffic/20190701.txt", "../data/topo.txt", "../data/attr.txt", 64)
+# Data = loadDataset("../data/balance.txt", "../data/topo.txt", "../data/attr.txt", 64)
 # temporal_data = Data.loadData([0.8, 0.9])
-# trainData = temporal_data.load_trainData()
+# for i in range(3):
+#     trainData = temporal_data.load_trainData()
+#     for j, data in enumerate(trainData):
+#         print(i, ",", j)
+# pass

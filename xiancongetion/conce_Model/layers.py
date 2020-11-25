@@ -31,9 +31,8 @@ def output_layer():
     pass
 
 
-def trainer(trainset_input, trainset_target,):
+def basemodel(trainset_input):
     rencentData, historyData, Attr = trainset_input
-    target = trainset_target
 
     embed_Attr = embed_conv1d(Attr, 5, 64, "attr_embedding")
     historydata = embed_conv2d(tf.transpose(historyData, [0, 1, 3, 2]), 3, 64, "his_dataEmbedding")
@@ -45,10 +44,8 @@ def trainer(trainset_input, trainset_target,):
     temporal_data = DualChannelTemporalConvolution()(gated_data)
 
     predicts = tf.nn.softmax(temporal_data, -1)
-    accuracy = tf.cast(tf.equal(tf.arg_max(predicts, -1), tf.arg_max(target, -1)), tf.int32)
-    loss = tf.reduce_mean(tf.reshape(tf.nn.softmax_cross_entropy_with_logits(labels=target, logits=predicts, dim=0), [-1, 1]), axis=0)
-    confusion_matrixs = tf.confusion_matrix(tf.arg_max(predicts, -1), tf.arg_max(target, -1), num_classes=4)
-    return accuracy, loss, confusion_matrixs
+
+    return predicts
 
 
 def tester():
