@@ -37,4 +37,4 @@ if __name__ == "__main__":
         print( "<======Successfully build the Model and Loading data, maybe this will take a period time !=========>")
         for temporal, uper, downer in data_iter:
             outputs = sess.run(model_output, feed_dict={temporal_input:np.reshape(temporal[:, 0:args.historical_steps, :], [-1, 1, args.historical_steps, 2])})
-
+         
