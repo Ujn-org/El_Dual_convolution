@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow.python.keras.layers import Layer, Conv2D, Conv1D, Dense
+from tensorflow.python.keras.layers import Layer, Conv2D, Conv1D, Dense, BatchNormalization
 from tensorflow.python.keras import backend as F
 import numpy as np
 
@@ -15,6 +15,21 @@ class BaseModel(Layer):
         self.units = units
         self.kernel_size = kernel_size
         super(BaseModel).__init__()
+
+    def layer_norm(self, x):
+        '''
+        Layer normalization function.
+        :param x: tensor, [batch_size, time_step, n_route, channel].
+        :param scope: str, variable scope.
+        :return: tensor, [batch_size, time_step, n_route, channel].
+        '''
+
+        mu, sigma = F.nn.moments(x, axes=[1, 2], keep_dims=True)
+        _, pre_s, c = x.get_shape()
+        gamma = F.variable(tf.ones([1, pre_s, c]))
+        beta = F.variable(tf.zeros([1, pre_s, c]))
+        _x = (x - mu) / (sigma + 1e-6) * gamma + beta
+        return _x
 
     def BaseModel(self, temporal_data, uper_data, downer_data):
         """
@@ -35,8 +50,12 @@ class BaseModel(Layer):
         squDowner = Conv2D(self.units[0], self.kernel_size[1], padding="valid", activation="relu")(down_temp)
 
         concat_features = F.concatenate([F.squeeze(squUper, 1), F.squeeze(squDowner, 1)], axis=-1)
-        model_out = Conv1D(2, self.kernel_size[1],activation="relu")(concat_features)
+        concat_features = self.layer_norm(concat_features)
+        model_out = Conv1D(2, self.kernel_size[1],activation="tanh")(concat_features)
 
         model_tti_out = Conv1D(1, self.kernel_size[1])(model_out[:, :, 0:1])
         model_speed_out = Conv1D(1, self.kernel_size[1])(model_out[:, :, 1:2])
+
         return model_tti_out, model_speed_out
+
+
